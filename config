@@ -1,0 +1,277 @@
+# i3 config file (v4)
+
+#set wallpaper
+exec --no-startup-id ~/.fehbg
+
+# Colors
+# start flavours
+## Base16 Pasque
+# Author: Gabriel Fontes (https://github.com/Misterio77)
+#
+# You can use these variables anywhere in the i3 configuration file.
+
+set $base00 #271C3A
+set $base01 #100323
+set $base02 #3E2D5C
+set $base03 #5D5766
+set $base04 #BEBCBF
+set $base05 #DEDCDF
+set $base06 #EDEAEF
+set $base07 #f37ef9
+set $base08 #A92258
+set $base09 #918889
+set $base0A #804ead
+set $base0B #C6914B
+set $base0C #7263AA
+set $base0D #8E7DC6
+set $base0E #953B9D
+set $base0F #59325C
+# end flavours
+
+#colors
+# class                  border  backgr. text    indicator child_border
+client.focused           $base07 $base00 $base05 $base07 $base07
+client.unfocused         $base03 $base00 $base04 $base00 $base03
+client.focused_inactive  $base03 $base00 $base04 $base00 $base03
+
+# Modifier keys
+set $mod Mod4
+set $alt Mod1
+
+
+# Font
+font pango:Fira Sans Regular 11
+
+# Gaps
+gaps horizontal 5
+gaps vertical 0 
+gaps top 5
+gaps inner 5
+default_border pixel 3
+for_window [class=".*"] border pixel 3
+
+###### KEYBINDINGS #######
+
+floating_modifier $mod
+
+# change focus
+bindsym $mod+Left  focus left
+bindsym $mod+Down  focus down
+bindsym $mod+Up    focus up
+bindsym $mod+Right focus right
+
+# move focused window
+bindsym $mod+Shift+Left  move left
+bindsym $mod+Shift+Down  move down
+bindsym $mod+Shift+Up    move up
+bindsym $mod+Shift+Right move right
+
+# split in horizontal and vertical orientation
+bindsym $mod+minus split v
+bindsym $mod+bar   split h
+
+# enter fullscreen mode for the focused container
+bindsym $mod+f fullscreen toggle
+
+# change container layout (stacked, tabbed, toggle split)
+bindsym $mod+Shift+t layout tabbed
+bindsym $mod+Shift+s layout stacked
+bindsym $mod+Shift+e layout toggle 
+
+# toggle tiling / floating
+bindsym $mod+Shift+space floating toggle
+bindsym $mod+o sticky toggle
+
+# change focus between tiling / floating windows
+bindsym $mod+space focus mode_toggle
+
+# focus the parent container
+bindsym $mod+p focus parent
+bindsym $mod+a focus parent
+
+# move workspace to another monitor
+bindsym $mod+$alt+$left move workspace to output left
+bindsym $mod+$alt+$right move workspace to output right
+bindsym $mod+$alt+Left move workspace to output left
+bindsym $mod+$alt+Right move workspace to output right
+
+# activate rofimenu
+bindsym $mod+d exec rofi -modi drun -show drun
+
+# start browser
+bindsym $mod+b exec google-chrome
+
+#volume
+set $refresh_i3status killall -SIGUSR1 i3status
+bindsym XF86AudioRaiseVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ +10% && $refresh_i3status
+bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume @DEFAULT_SINK@ -10% && $refresh_i3status
+bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute @DEFAULT_SINK@ toggle && $refresh_i3status
+bindsym XF86AudioMicMute exec --no-startup-id pactl set-source-mute @DEFAULT_SOURCE@ toggle && $refresh_i3status
+
+# Media player controls
+bindsym XF86AudioPlay exec --no-startup-id mpris-ctl --player $(currentplayer) pp
+bindsym XF86AudioNext exec --no-startup-id mpris-ctl --player $(currentplayer) next
+bindsym XF86AudioPrev exec --no-startup-id mpris-ctl --player $(currentplayer) prev
+
+## Macro keys ##
+set $m1 XF86Tools
+set $m2 XF86Launch5
+set $m3 XF86Launch6
+set $m4 XF86Launch7
+set $m5 XF86Launch8
+
+# M1
+bindsym        $m1 exec rofimenu applications left 舘
+
+# M2
+bindsym        $m2 exec rofimenu run center \>
+
+# M3
+#bindsym        $m3 exec servidor=$(~/.config/polybar/scripts/minecraft-detailed.sh) && kitty -1 --listen-on=unix:@reloadkitty sudo -u minecraft /srv/minecraft/bin/minecraftd $servidor console
+#bindsym Shift+ $m3 exec kitty -1 --listen-on=unix:@reloadkitty zsh -c 'cd /srv/minecraft && sudo su minecraft'
+
+# M4
+bindsym        $m4 exec rofimenu colors right  
+bindsym Shift+ $m4 exec --no-startup-id flavours apply
+bindsym $alt+  $m4 exec --no-startup-id toggledark || notify-send "Couldn't switch color" "This scheme doesn't have a dark/light version" -t 3000
+
+# M5
+bindsym        $m5  exec rofimenu wallpapers right  
+bindsym Shift+ $m5  exec --no-startup-id setwallpaper -R
+
+
+### Shortcuts ###
+# Open app menu
+exec_always --no-startup-id killall xcape; xcape -t 150 -e 'Super_L=Super_L|Escape'
+bindsym $mod+Escape exec rofimenu applications left 舘
+
+# Get a password from bitwarden
+bindsym Scroll_Lock            exec (bwpass | cpc)
+# Login bitwarden
+bindsym Shift+Scroll_Lock      exec bwunlock
+# Logout bitwarden
+bindsym $alt+Scroll_Lock       exec bwlock
+# Change Window
+bindsym $alt+Tab     exec rofimenu window center  
+
+# Run dialog
+bindsym $alt+F2      exec rofimenu run center \>
+
+# Power menu
+bindsym Pause        exec rofimenu power icons $(whoami)@$(hostname) 
+
+#lockscreen
+bindsym $mod+control+l exec --no-startup-id bwlock & multilockscreen -l
+bindsym $mod+Pause     exec --no-startup-id bwlock & multilockscreen -l
+bindsym Shift+Pause    exec --no-startup-id bwlock & multilockscreen -l
+
+# Close windows
+bindsym $alt+F4      kill
+bindsym $mod+x kill
+
+# Terminal
+bindsym $mod+t       exec kitty -1 --listen-on=unix:@reloadkitty
+bindsym $mod+Return  exec kitty -1 --listen-on=unix:@reloadkitty
+
+# Screenshot
+# Entire Screen
+#bindsym --release Print        exec --no-startup-id shotgun - | save_clip
+#bindsym --release Shift+Print  exec --no-startup-id shotgun - | save_file
+# Selection
+bindsym --release $mod+Print       exec --no-startup-id sel=$(slopblur) && shotgun $sel - | save_clip
+bindsym --release $mod+Shift+Print exec --no-startup-id sel=$(slopblur) && shotgun $sel - | save_file
+
+
+# scratchpad
+bindsym $mod+u       scratchpad show
+bindsym $mod+Shift+u move scratchpad
+
+
+# switch to workspace
+bindsym $mod+1 workspace number 1 #and
+bindsym $mod+2 workspace number 2 #and
+bindsym $mod+3 workspace number 3 #and
+bindsym $mod+4 workspace number 4 #and
+bindsym $mod+5 workspace number 5 #and
+bindsym $mod+6 workspace number 6 #and
+bindsym $mod+7 workspace number 7 #and
+bindsym $mod+8 workspace number 8 #and
+
+# Move focused container to workspace
+bindsym $mod+Shift+1 move container to workspace number 1
+bindsym $mod+Shift+2 move container to workspace number 2
+bindsym $mod+Shift+3 move container to workspace number 3
+bindsym $mod+Shift+4 move container to workspace number 4
+bindsym $mod+Shift+5 move container to workspace number 5
+bindsym $mod+Shift+6 move container to workspace number 6
+bindsym $mod+Shift+7 move container to workspace number 7
+bindsym $mod+Shift+8 move container to workspace number 8
+
+
+# reload the configuration file
+bindsym $mod+Shift+v reload
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+# exit i3 (logs you out of your X session)
+bindsym $mod+Shift+x exec --no-startup-id zenity --question --text="Do you really want to exit? This will end your X session." --no-wrap --icon-name=exit && i3-msg exit
+
+
+
+mode "resize" {
+        # resize windows
+        bindsym $right resize shrink width 30 px or 10 ppt
+        bindsym $down resize grow height 30 px or 10 ppt
+        bindsym $up resize shrink height 30 px or 10 ppt
+        bindsym $left resize grow width 30 px or 10 ppt
+
+        # move windows
+        bindsym Shift+$right move right 30
+        bindsym Shift+$down  move down 30
+        bindsym Shift+$up    move up 30
+        bindsym Shift+$left  move left 30
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+mode "display" {
+
+        bindsym Return mode "default"
+        bindsym Escape mode "default"
+}
+
+bindsym $mod+r mode "resize"
+#bindsym $mod+d mode "display"
+
+# Move origin out of the way
+for_window [instance="origin.exe"] move scratchpad
+for_window [instance="explorer.exe"] move scratchpad
+# Automatic floating
+for_window [title="Friends List"] floating enable
+for_window [title="Friends List"] [floating] resize set 300 600
+for_window [instance="scrcpy"] floating enable
+for_window [class="GStreamer"] floating enable
+
+#Toggle picom
+bindsym $mod+c exec --no-startup-id "picom"
+bindsym $mod+Shift+c exec --no-startup-id "killall picom"
+
+### Startup programs ###
+
+# start compositor
+exec --no-startup-id picom
+
+# (re)start polybar
+exec_always --no-startup-id ~/.config/polybar/launch.sh 
+
+# (re)start dunst
+exec_always --no-startup-id killall dunst && dunst
+
+
+# for transparency
+exec --no-startup-id picom
+
+# auto update workspace icons
+exec_always --no-startup-id  ~/.config/i3/scripts/autoname_workspaces.py &
+
+exec_always xset s off
