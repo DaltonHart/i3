@@ -4,10 +4,6 @@
 exec --no-startup-id ~/.fehbg
 
 # Colors
-# start flavours
-## Base16 Pasque
-# Author: Gabriel Fontes (https://github.com/Misterio77)
-#
 # You can use these variables anywhere in the i3 configuration file.
 
 set $base00 #271C3A
@@ -17,7 +13,7 @@ set $base03 #5D5766
 set $base04 #BEBCBF
 set $base05 #DEDCDF
 set $base06 #EDEAEF
-set $base07 #f37ef9
+set $base07 #840B1F
 set $base08 #A92258
 set $base09 #918889
 set $base0A #804ead
@@ -45,8 +41,8 @@ font pango:Fira Sans Regular 11
 # Gaps
 gaps horizontal 5
 gaps vertical 0 
-gaps top 5
-gaps inner 5
+gaps top 35
+gaps inner 10
 default_border pixel 3
 for_window [class=".*"] border pixel 3
 
@@ -73,10 +69,6 @@ bindsym $mod+bar   split h
 # enter fullscreen mode for the focused container
 bindsym $mod+f fullscreen toggle
 
-# change container layout (stacked, tabbed, toggle split)
-bindsym $mod+Shift+t layout tabbed
-bindsym $mod+Shift+s layout stacked
-bindsym $mod+Shift+e layout toggle 
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
@@ -96,10 +88,13 @@ bindsym $mod+$alt+Left move workspace to output left
 bindsym $mod+$alt+Right move workspace to output right
 
 # activate rofimenu
-bindsym $mod+d exec rofi -modi drun -show drun
+bindsym $mod+d exec ~/.config/scripts/menu_full
+
+bindsym $mod+Tab exec ~/.config/scripts/menu_tab
+
 
 # start browser
-bindsym $mod+b exec google-chrome
+bindsym $mod+b exec google-chrome-stable
 
 #volume
 set $refresh_i3status killall -SIGUSR1 i3status
@@ -128,7 +123,7 @@ bindsym        $m2 exec rofimenu run center \>
 
 # M3
 #bindsym        $m3 exec servidor=$(~/.config/polybar/scripts/minecraft-detailed.sh) && kitty -1 --listen-on=unix:@reloadkitty sudo -u minecraft /srv/minecraft/bin/minecraftd $servidor console
-#bindsym Shift+ $m3 exec kitty -1 --listen-on=unix:@reloadkitty zsh -c 'cd /srv/minecraft && sudo su minecraft'
+#bindsym Shift+ $m3 exec alacritty -1 --listen-on=unix:@reloadkitty zsh -c 'cd /srv/minecraft && sudo su minecraft'
 
 # M4
 bindsym        $m4 exec rofimenu colors right  
@@ -160,19 +155,14 @@ bindsym $alt+F2      exec rofimenu run center \>
 # Power menu
 bindsym Pause        exec rofimenu power icons $(whoami)@$(hostname) 
 
-#lockscreen
-bindsym $mod+control+l exec --no-startup-id bwlock & multilockscreen -l
-bindsym $mod+Pause     exec --no-startup-id bwlock & multilockscreen -l
-bindsym Shift+Pause    exec --no-startup-id bwlock & multilockscreen -l
 
 # Close windows
 bindsym $alt+F4      kill
 bindsym $mod+x kill
 
 # Terminal
-bindsym $mod+t       exec kitty -1 --listen-on=unix:@reloadkitty
-bindsym $mod+Return  exec kitty -1 --listen-on=unix:@reloadkitty
-
+bindsym $mod+t       exec alacritty -1 --listen-on=unix:@reloadkitty
+bindsym $mod+Return  exec alacritty
 # Screenshot
 # Entire Screen
 #bindsym --release Print        exec --no-startup-id shotgun - | save_clip
@@ -213,8 +203,11 @@ bindsym $mod+Shift+v reload
 # restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
 bindsym $mod+Shift+r restart
 # exit i3 (logs you out of your X session)
-bindsym $mod+Shift+x exec --no-startup-id zenity --question --text="Do you really want to exit? This will end your X session." --no-wrap --icon-name=exit && i3-msg exit
+# bindsym $mod+Shift+x exec --no-startup-id zenity --question --text="Do you really want to exit? This will end your X session." --no-wrap --icon-name=exit && i3-msg exit
 
+
+# Exit i3
+bindsym $mod+Shift+e exec $HOME/.config/scripts/sysmenu
 
 
 mode "resize" {
@@ -258,20 +251,22 @@ bindsym $mod+Shift+c exec --no-startup-id "killall picom"
 
 ### Startup programs ###
 
-# start compositor
-exec --no-startup-id picom
 
 # (re)start polybar
-exec_always --no-startup-id ~/.config/polybar/launch.sh 
+exec_always --no-startup-id ~/.config/polybar/launch.sh
 
 # (re)start dunst
 exec_always --no-startup-id killall dunst && dunst
 
+# lockscreen
+bindsym $mod+l exec --no-startup-id betterlockscreen -l
 
 # for transparency
 exec --no-startup-id picom
 
-# auto update workspace icons
-exec_always --no-startup-id  ~/.config/i3/scripts/autoname_workspaces.py &
+# set default brightness
+exec_always xbacklight -set 20
 
-exec_always xset s off
+# brightness
+bindsym XF86MonBrightnessUp exec xbacklight -inc 5
+bindsym XF86MonBrightnessDown exec xbacklight -dec 5
